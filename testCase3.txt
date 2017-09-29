@@ -1,0 +1,1 @@
+Schemes:nice(a)job(j,o,b)dude(d,u,d,e)nice(w,o)Facts:nice('string','string2')

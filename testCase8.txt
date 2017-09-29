@@ -1,0 +1,4 @@
+Schemes:nice(a)job(j,o,b)dude(d,u,d,e)nice(w,o)
+Facts:nice('string','string2','string2','string2','string2','string2','string2''string2''string2''string2''string2''string2').
+Rules:rulelist(id,o,c):-id('nice'),nice((ID+nice).
+Queries:nice(n)?dude(dude)?dude(dude)?dude(dude)?dude(dude)?dude(dude)?dude(dude)?dude(dude)?dude(dude)?dude(dude)?dude(dude)?

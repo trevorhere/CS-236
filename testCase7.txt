@@ -1,0 +1,4 @@
+Schemes:nice(a)job(j,o,b)dude(d,u,d,e)nice(w,o)
+Facts:nice('string','string2').
+Rules:rulelist(id,o,c):-id('nice'),nice((ID+nice).
+Queries:nice(n)?this(is)?the(part)?where(my)?code(goes)?on(for)?ever(and)?always(well)?it(is)?not(over)?just(yet)?
