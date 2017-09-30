@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 #include "Token.h"
+#include "DatalogProgram.h"
+#include "Rule.h"
 
 using namespace std;
 
@@ -12,7 +14,14 @@ public:
 
 	int index;
 	vector<token> tV;
+	vector<string> Domains;
 
+	DatalogProgram datalogProgram;
+
+	Predicate pred;
+	Rule rul;
+
+	string getDomains();
 	void parseTokens();
 	void checkLineOne();
 	void scheme();
@@ -29,12 +38,13 @@ public:
 	void predicate();
 	void predicateList();
 	void parameter();
+	void parameterList();
 	void expression();
 	bool checkOperator(string vectorType);
 	void checkLineFour();
 	void query();
 	void queryList();
-	bool checkMatch(string vectorType, string Type);
-	//void throwExceptionFunction(token t);
+	bool checkMatch(string vectorType, string Type); 
+	DatalogProgram getData();
 };
 

@@ -1,6 +1,6 @@
 
 //Trevor Lane
- //#pragma once
+ #pragma once
 #include "Token.h"
 #include <vector>
 #include <iostream>

@@ -11,10 +11,15 @@ DatalogParser::DatalogParser(std::vector<token> tokenVector)
 	
 	index = 0;
 	tV = tokenVector;
-	parseTokens();
 	
-}
+	datalogProgram = DatalogProgram();
+	
+	pred = Predicate();
+	rul = Rule();
+	parseTokens();
 
+
+}
 
 DatalogParser::~DatalogParser(){}
 
@@ -23,7 +28,6 @@ void DatalogParser::parseTokens()
 	if (tV.size() == 0)
 		throw("empty array");
  
-	// check line one
 	checkLineOne();
 	checkLineTwo();
 	checkLineThree();
@@ -31,7 +35,6 @@ void DatalogParser::parseTokens()
 
 }
 
- 
 void  DatalogParser::checkLineOne()
 {
 
@@ -58,6 +61,8 @@ void  DatalogParser::checkLineOne()
 void  DatalogParser::scheme()
 {
 
+	 pred = Predicate(tV[index].value);
+	
 	if (tV[index].type == "ID")
 	{
 		index++;
@@ -68,15 +73,17 @@ void  DatalogParser::scheme()
 
 			if (tV[index].type == "ID")
 			{
+				pred.pushParameter(Parameter(tV[index].type, tV[index].value));
 				index++;
 		
 				if (tV[index].type == "COMMA")
 				{
-					idList();
+					 idList();
 				}
 				
 					if (tV[index].type == "RIGHT_PAREN")
 					{
+
 						index++;
 					}
 					else
@@ -99,17 +106,22 @@ void  DatalogParser::scheme()
 	{
 		throw tV[index];
 	}
+
+	datalogProgram.pushScheme(pred);
 }
 
-void  DatalogParser::idList()
+void DatalogParser::idList()
 {
+
 	if (tV[index].type == "COMMA")
 	{
 		index++;
 
 		if (tV[index].type == "ID")
 		{
+			pred.pushParameter(Parameter(tV[index].type, tV[index].value));
 			index++;
+
 			if (tV[index].type == "COMMA")
 			{
 				idList();
@@ -124,7 +136,6 @@ void  DatalogParser::idList()
 	{ 
 		throw tV[index];
 	}
-
 
 }
 
@@ -173,6 +184,7 @@ void  DatalogParser::factList()
 
 void DatalogParser::fact()
 {
+	pred = Predicate(tV[index].value);
 
 	if (tV[index].type == "ID")
 	{
@@ -184,6 +196,8 @@ void DatalogParser::fact()
 
 			if (tV[index].type == "STRING")
 			{
+				Domains.push_back(tV[index].value);
+				pred.pushParameter(Parameter(tV[index].type, tV[index].value));
 				index++;
 
 				if (tV[index].type == "COMMA")
@@ -223,6 +237,8 @@ void DatalogParser::fact()
 	{
 		throw tV[index];
 	}
+
+	datalogProgram.pushFacts(pred);
 }
 
 void  DatalogParser::stringList()
@@ -233,6 +249,7 @@ void  DatalogParser::stringList()
 
 		if (tV[index].type == "STRING")
 		{
+			pred.pushParameter(Parameter(tV[index].type, tV[index].value));
 			index++;
 			if (tV[index].type == "COMMA")
 			{
@@ -283,6 +300,8 @@ void DatalogParser::rule()
 	{
 		headPredicate();
 
+		rul = Rule(pred);
+
 		if (tV[index].type == "COLON_DASH")
 		{
 			index++;
@@ -319,12 +338,15 @@ void DatalogParser::rule()
 	{
 		throw tV[index];
 	}
+
+	datalogProgram.pushRule(rul);
 }
 
 void  DatalogParser::headPredicate()
 {
 	if (tV[index].type == "ID")
 	{
+		pred = Predicate(tV[index].value);
 		index++;
 
 		if (tV[index].type == "LEFT_PAREN")
@@ -332,6 +354,7 @@ void  DatalogParser::headPredicate()
 			index++;
 			if (tV[index].type == "ID")
 			{
+				pred.pushParameter(Parameter(tV[index].type, tV[index].value));
 				index++;
 				if (tV[index].type == "COMMA")
 				{
@@ -367,6 +390,7 @@ void  DatalogParser::predicate()
 {
 	if (tV[index].type == "ID")
 	{
+		pred = Predicate(tV[index].value);
 		index++;
 		if (tV[index].type == "LEFT_PAREN")
 		{
@@ -377,7 +401,7 @@ void  DatalogParser::predicate()
 
 				if (tV[index].type == "COMMA")
 				{
-					predicateList();
+					parameterList();
 				}
 				if (tV[index].type == "RIGHT_PAREN")
 				{
@@ -402,7 +426,7 @@ void  DatalogParser::predicate()
 	{
 		throw tV[index];
 	}
-
+	rul.pushPredicate(pred);
 }
 
 void  DatalogParser::predicateList()
@@ -435,15 +459,43 @@ void DatalogParser::parameter()
 {
 	if (tV[index].type == "STRING")
 	{
+		pred.pushParameter(Parameter(tV[index].type, tV[index].value));
 		index++;	
 	}
 	else if(tV[index].type == "ID")
 	{
+		pred.pushParameter(Parameter(tV[index].type, tV[index].value));
 		index++;
 	}
 	else
 	{
 		expression();
+	}
+}
+
+void DatalogParser::parameterList()
+{
+	if (tV[index].type == "COMMA")
+	{
+		index++;
+
+		if (tV[index].type == "ID" || tV[index].type == "STRING" || tV[index].type == "LEFT_PAREN")
+		{
+			parameter();
+
+			if (tV[index].type == "COMMA")
+			{
+				parameterList();
+			}
+		}
+		else
+		{
+			throw tV[index];
+		}
+	}
+	else
+	{
+		throw tV[index];
 	}
 }
 
@@ -523,6 +575,7 @@ void DatalogParser::query()
 {
 	if (tV[index].type == "ID")
 	{
+		pred = Predicate(tV[index].value);
 		predicate();
 		if (tV[index].type == "Q_MARK")
 		{
@@ -537,6 +590,8 @@ void DatalogParser::query()
 	{
 		throw tV[index];
 	}
+
+	datalogProgram.pushQueries(pred);
 }
 
 void DatalogParser::queryList()
@@ -560,3 +615,25 @@ bool DatalogParser::checkMatch(string vectorType, string Type)
 
 	return false;
 }
+
+
+
+DatalogProgram DatalogParser::getData()
+{
+	return datalogProgram;
+}
+
+string DatalogParser::getDomains()
+{
+	stringstream ss;
+	ss << "Domains(" << Domains.size() << ")" << endl;
+	for (int i = 0; i < Domains.size(); i++)
+	{
+		ss << "  " << Domains[i] << endl;
+	}
+
+	return ss.str();
+}
+
+
+//./lab2 info.txt ouput.txt ....diff out.txt. expected.txt

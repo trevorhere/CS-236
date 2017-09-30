@@ -1,1 +1,0 @@
-Schemes:nice(s,n,a,p)

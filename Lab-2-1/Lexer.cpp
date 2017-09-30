@@ -54,7 +54,7 @@ void lexer::readFile(string fileName)
 	{
 		cout << "Failed to open file";
 	}
-		
+
 }
 
 void lexer::readString(string s)
@@ -73,7 +73,7 @@ void lexer::readString(string s)
 		checkForNewLine(s);
 		if (index  > s.length() - 1)
 			break;
-		
+
 		//WHITESPACE #############################################################
 		isSpaceFunction(s);
 		if (index  > s.length() - 1)
@@ -95,15 +95,6 @@ void lexer::readString(string s)
 	createToken("EOF", "", lineNumber);
 
 }
-
-//bool lexer::checkLines()
-//{
-//	if ((numberOfNewLines + 1) == lineNumber)
-//		return true;
-//
-//	else 
-//		return false;
-//}
 
 void lexer::checkCarrageReturn(string s)
 {
@@ -230,11 +221,11 @@ void lexer::storeLineComment(string s)
 	{
 		if (index >= s.length() - 1)
 		{
-			commsConts += s[index];
+			//commsConts += s[index];
 			index++;
 			break;
 		}
-		
+
 		if (s[index + 1] != '\n')
 		{
 			index++;
@@ -261,7 +252,7 @@ void lexer::checkForTab(string s)
 {
 	while (s[index] == '\t')
 		index++;
-	
+
 
 }
 void lexer::isSpaceFunction(string s)
@@ -290,7 +281,7 @@ void lexer::readWordToken(string s)
 			break;
 		// id with a line break next to it
 		//test this somehow
-			
+
 
 		tokenType += s[index];
 		index++;
@@ -350,13 +341,13 @@ void lexer::storePuncToken(string s)
 		index++;
 		break;
 
-		//PERIOD #########################################################	
+		//PERIOD #########################################################
 	case '.':
 		createToken("PERIOD", ".", lineNumber);
 		index++;
 		break;
 
-		//Q_MARK #########################################################	
+		//Q_MARK #########################################################
 	case '?':
 		createToken("Q_MARK", "?", lineNumber);
 		index++;
@@ -404,7 +395,7 @@ void lexer::storePuncToken(string s)
 		break;
 
 		//COMMENT ########################################################
-	case '#':   //piece of trash function is storing two tokens	
+	case '#':   //piece of trash function is storing two tokens
 	{
 		if (s[index + 1] == '|') // BLOCK COMMENT
 		{
@@ -422,7 +413,7 @@ void lexer::storePuncToken(string s)
 		storeString(s);
 		break;
 
-		//UNDEFINED #########################################################    	
+		//UNDEFINED #########################################################
 	default:
 	{
 		if (s[index] != '\n')
